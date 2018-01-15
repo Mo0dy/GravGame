@@ -58,37 +58,58 @@ def reset(dt):
     setup()
 
 
-keyfunction = {
+def create_well(dt):
+    global wells
+    wells.append(Well(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], 80000000))
+    for p in planets:
+        if isinstance(p, CastPlanet):
+            p.cast_ray(wells, planets, size_x, size_y)
+
+
+keypressed_functions = {
     pg.K_ESCAPE: my_exit,
-    pg.K_SPACE: reset
+    pg.K_SPACE: reset,
 }
 
 
+keydown_functions = {
+    pg.K_c: create_well
+}
+
+keydown = []  # stores the keys that were pressed each turn
+keyup = []  # stores the keys that were released each turn
+keypressed = {}  # stores if key is currently pressed
+
 #  Updates everything in the game. This is the main place for gamelogic
 def update(dt):
+    global keydown
     global rays
     for s in selection:
         if isinstance(s, Planet):
             s.point_at(pg.mouse.get_pos())
             s.cast_ray(wells, planets, size_x, size_y)
         elif isinstance(s, Well):
-            s.set_size(length(s.pos - pg.mouse.get_pos()))
+            s.set_size(length(s.pos - pg.mouse.get_pos()) / 4)
             for p in planets:
                 if isinstance(p, CastPlanet):
                     p.cast_ray(wells, planets, size_x, size_y)
     for k in keypressed:
+
         if keypressed[k]:
             try:
-                keyfunction[k](dt)
+                keypressed_functions[k](dt)
             except:
                 pass
-
+        for k in keydown:
+            try:
+                keydown_functions[k](dt)
+            except:
+                pass
+    keydown = []
+    keyup = []
     #   l.update(dt, wells)
 
 
-keydown = []  # stores the keys that were pressed each turn
-keyup = []  # stores the keys that were released each turn
-keypressed = {}  # stores if key is currently pressed
 def keyhandler():
     global keydown
     global keyup
@@ -97,8 +118,6 @@ def keyhandler():
         keypressed[k] = True
     for k in keyup:
         keypressed[k] = False
-    keydown = []
-    keyup = []
 
 
 selection = []
