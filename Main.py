@@ -66,9 +66,18 @@ def create_well(dt):
             p.cast_ray(wells, planets, size_x, size_y)
 
 
+def move_little(dt):
+    global planets
+    for p in planets:
+        if isinstance(p, CastPlanet):
+            p.aim += 0.001
+            p.cast_ray(wells, planets, size_x, size_y)
+
+
 keypressed_functions = {
     pg.K_ESCAPE: my_exit,
     pg.K_SPACE: reset,
+    pg.K_m: move_little,
 }
 
 
@@ -83,6 +92,7 @@ keypressed = {}  # stores if key is currently pressed
 #  Updates everything in the game. This is the main place for gamelogic
 def update(dt):
     global keydown
+    global keyup
     global rays
     for s in selection:
         if isinstance(s, Planet):
