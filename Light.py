@@ -1,32 +1,41 @@
 from GravGame.Utility import *
 from copy import deepcopy
+import pygame as pg
+import time
 
 LIGHTSPEED = 1000
 RAY_STEPSIZE = 0.005
 
 
 class Ray(GameObj):
-    def __init__(self, pos, vel, color, wells, planets, p, min_x, max_x, min_y, max_y):
+    def __init__(self, pos, vel, color, wells, planets, p, min_x, max_x, min_y, max_y, **kwargs):
         super().__init__(pos, 2, color)
         self.vel = vel / length(vel) *  LIGHTSPEED
         self.tail = []
+        if "debug" in kwargs:
+            self.debug = kwargs["debug"]
+        else:
+            self.debug = False
         self.create(wells, planets, p, min_x, max_x, min_y, max_y)
 
     def create(self, wells, planets, p, min_x, max_x, min_y, max_y):
         pos = self.pos
         vel = self.vel
         forces = np.zeros(2)
+        # out of bounds and collision check
         while pos[0] > min_x and pos[0] < max_x and pos[1] > min_y and pos[1] < max_y and not self.collision(wells, planets, p):
             # out of bounds and wells collision
             self.tail.append(deepcopy(pos))
             # Update Velocity then update position
+            forces = np.zeros(2)
             for w in wells:
                 c_vec = w.pos - self.pos
                 distance = length(c_vec)
-                forces += w.m / distance ** 4 * c_vec  # / distance ** 3 would be more correct but / distance ** 4 is more fun
+                forces += w.m * 2 / distance ** 4 * c_vec  # / distance ** 3 would be more correct but / distance ** 4 is more fun
             vel += forces * RAY_STEPSIZE
             vel = vel / np.sqrt(np.dot(vel, vel)) * LIGHTSPEED
             pos += vel * RAY_STEPSIZE
+
 
     def collision(self, wells, planets, p):
         for w in wells:

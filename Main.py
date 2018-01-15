@@ -96,6 +96,12 @@ def move_little_right(dt):
             p.cast_ray(wells, planets, size_x, size_y)
 
 
+def toggle_debug(dt):
+    for p in planets:
+        if isinstance(p, CastPlanet):
+            p.cast_ray(wells, planets, size_x, size_y, debug=True)
+
+
 keypressed_functions = {
     pg.K_ESCAPE: my_exit,
     pg.K_SPACE: reset,
@@ -106,8 +112,9 @@ keypressed_functions = {
 
 keydown_functions = {
     pg.K_c: create_well,
-    pg.K_o: increase_precision,
-    pg.K_l: decrease_precision,
+    pg.K_DOWN: increase_precision,
+    pg.K_UP: decrease_precision,
+    pg.K_d: toggle_debug,
 }
 
 keydown = []  # stores the keys that were pressed each turn
@@ -129,17 +136,16 @@ def update(dt):
                 if isinstance(p, CastPlanet):
                     p.cast_ray(wells, planets, size_x, size_y)
     for k in keypressed:
-
         if keypressed[k]:
             try:
                 keypressed_functions[k](dt)
             except:
                 pass
-        for k in keydown:
-            try:
-                keydown_functions[k](dt)
-            except:
-                pass
+    for k in keydown:
+        try:
+            keydown_functions[k](dt)
+        except:
+            pass
     keydown = []
     keyup = []
     #   l.update(dt, wells)
@@ -164,7 +170,6 @@ def on_click():
     for w in wells:
         if is_on(pos, w):
             selection.append(w)
-
 
 
 def on_release():
@@ -197,6 +202,7 @@ while loop:
         elif e.type == pg.MOUSEBUTTONUP:
             on_release()
 
+    # this has to be called before udpate
     keyhandler()
     update(dt)
     # collision(rays, wells)

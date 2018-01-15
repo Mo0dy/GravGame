@@ -39,7 +39,11 @@ class CastPlanet(Planet):
         else:
             self.aim = -angle
 
-    def cast_ray(self, wells, planets, size_x, size_y):
+    def cast_ray(self, wells, planets, size_x, size_y, **kwargs):
+        if "debug" in kwargs:
+            debug = kwargs["debug"]
+        else:
+            debug = False
         self.connected = False
         try:
             self.ray.planet.connected = False
@@ -48,7 +52,7 @@ class CastPlanet(Planet):
         self.ray = Ray(deepcopy(self.pos),
             translate(to_vec(LIGHTSPEED, 0), mat_rot(self.aim)),
             self.color.correct_gamma(0.5),
-            wells, planets, self, 0, size_x, 0, size_y)
+            wells, planets, self, 0, size_x, 0, size_y, debug=debug)
 
 
 class GoalPlanet(Planet):
