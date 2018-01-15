@@ -8,7 +8,7 @@ RAY_STEPSIZE = 0.005
 class Ray(GameObj):
     def __init__(self, pos, vel, color, wells, planets, p, min_x, max_x, min_y, max_y):
         super().__init__(pos, 2, color)
-        self.vel = vel
+        self.vel = vel / length(vel) *  LIGHTSPEED
         self.tail = []
         self.create(wells, planets, p, min_x, max_x, min_y, max_y)
 
@@ -38,8 +38,9 @@ class Ray(GameObj):
                 c_vec = plan.pos - self.pos
                 if np.dot(c_vec, c_vec) < np.square(plan.size):
                     if plan.color == p.color:
-                        plan.color = plan.color.correct_gamma(0.5)
-                        p.color = p.color.correct_gamma(0.5)
+                        self.planet = plan
+                        plan.connected = True
+                        p.connected = True
                     return True
         return False
 

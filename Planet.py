@@ -40,6 +40,11 @@ class CastPlanet(Planet):
             self.aim = -angle
 
     def cast_ray(self, wells, planets, size_x, size_y):
+        self.connected = False
+        try:
+            self.ray.planet.connected = False
+        except:
+            pass
         self.ray = Ray(deepcopy(self.pos),
             translate(to_vec(LIGHTSPEED, 0), mat_rot(self.aim)),
             self.color.correct_gamma(0.5),
