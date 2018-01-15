@@ -66,23 +66,48 @@ def create_well(dt):
             p.cast_ray(wells, planets, size_x, size_y)
 
 
-def move_little(dt):
+precision = 0.001
+
+
+def increase_precision(dt):
+    global precision
+    precision = precision / 10
+    print(precision)
+
+
+def decrease_precision(dt):
+    global precision
+    precision *= 10
+    print(precision)
+
+
+def move_little_left(dt):
     global planets
     for p in planets:
         if isinstance(p, CastPlanet):
-            p.aim += 0.001
+            p.aim += precision
+            p.cast_ray(wells, planets, size_x, size_y)
+
+def move_little_right(dt):
+    global planets
+    for p in planets:
+        if isinstance(p, CastPlanet):
+            p.aim -= precision
             p.cast_ray(wells, planets, size_x, size_y)
 
 
 keypressed_functions = {
     pg.K_ESCAPE: my_exit,
     pg.K_SPACE: reset,
-    pg.K_m: move_little,
+    pg.K_RIGHT: move_little_right,
+    pg.K_LEFT: move_little_left,
 }
 
 
 keydown_functions = {
-    pg.K_c: create_well
+    pg.K_c: create_well,
+    pg.K_o: increase_precision,
+    pg.K_l: decrease_precision,
 }
 
 keydown = []  # stores the keys that were pressed each turn
