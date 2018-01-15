@@ -1,6 +1,5 @@
 from GravGame.Utility import *
 from copy import deepcopy
-import numba as nb
 
 LIGHTSPEED = 1000
 RAY_STEPSIZE = 0.005
@@ -13,7 +12,6 @@ class Ray(GameObj):
         self.tail = []
         self.create(wells, planets, p, min_x, max_x, min_y, max_y)
 
-    # @nb.jit
     def create(self, wells, planets, p, min_x, max_x, min_y, max_y):
         pos = self.pos
         vel = self.vel
@@ -30,7 +28,6 @@ class Ray(GameObj):
             vel = vel / np.sqrt(np.dot(vel, vel)) * LIGHTSPEED
             pos += vel * RAY_STEPSIZE
 
-    # @nb.jit
     def collision(self, wells, planets, p):
         for w in wells:
             c_vec = w.pos - self.pos
