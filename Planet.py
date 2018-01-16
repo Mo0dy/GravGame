@@ -14,17 +14,20 @@ class Planet(GameObj):
             color = self.color.correct_gamma(0.5)
         else:
             color = self.color
-        self.draw_child(screen, mat)  # child draw function
+        # might not work because planets has no ray
+        try:
+            self.draw_child(screen, mat)  # child draw function
+        except:
+            pass
         drawpos = to_tuple(translate(self.pos, mat))
         gfxdraw.aacircle(screen, drawpos[0], drawpos[1], self.size, color)
         gfxdraw.filled_circle(screen, drawpos[0], drawpos[1], self.size, color)
 
 
 class CastPlanet(Planet):
-    def __init__(self, pos, size, color, wells, planets, size_x, size_y):
+    def __init__(self, pos, size, color):
         super().__init__(pos, size, color)
         self.aim = 0  # angle at which the Planet aims
-        self.cast_ray(wells, planets, size_x, size_y)
 
     def draw_child(self, screen, mat):
         # draws aim vector
