@@ -14,17 +14,20 @@ class Planet(GameObj):
             color = self.color.correct_gamma(0.5)
         else:
             color = self.color
-        self.draw_child(screen, mat)  # child draw function
+        # might not work because planets has no ray
+        try:
+            self.draw_child(screen, mat)  # child draw function
+        except:
+            pass
         drawpos = to_tuple(translate(self.pos, mat))
         gfxdraw.aacircle(screen, drawpos[0], drawpos[1], self.size, color)
         gfxdraw.filled_circle(screen, drawpos[0], drawpos[1], self.size, color)
 
 
 class CastPlanet(Planet):
-    def __init__(self, pos, size, color, wells, planets, size_x, size_y):
+    def __init__(self, pos, size, color):
         super().__init__(pos, size, color)
         self.aim = 0  # angle at which the Planet aims
-        self.cast_ray(wells, planets, size_x, size_y)
 
     def draw_child(self, screen, mat):
         # draws aim vector
@@ -39,11 +42,20 @@ class CastPlanet(Planet):
         else:
             self.aim = -angle
 
-    def cast_ray(self, wells, planets, size_x, size_y):
+    def cast_ray(self, wells, planets, size_x, size_y, **kwargs):
+        if "debug" in kwargs:
+            debug = kwargs["debug"]
+        else:
+            debug = False
+        self.connected = False
+        try:
+            self.ray.planet.connected = False
+        except:
+            pass
         self.ray = Ray(deepcopy(self.pos),
             translate(to_vec(LIGHTSPEED, 0), mat_rot(self.aim)),
             self.color.correct_gamma(0.5),
-            wells, planets, self, 0, size_x, 0, size_y)
+            wells, planets, self, 0, size_x, 0, size_y, debug=debug)
 
 
 class GoalPlanet(Planet):
