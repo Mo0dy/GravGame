@@ -14,8 +14,8 @@ class Level(object):
 # mode
 levels = {
     "test_level": Level(
-        [[Well(400, 400, 80000000)],
-         [CastPlanet(to_vec(400, 100), 30, GREEN),
-          GoalPlanet(to_vec(400, 700), 20, GREEN)]]
+        [Well(400, 400, 80000000)],
+        [CastPlanet(to_vec(400, 100), 30, GREEN),
+         GoalPlanet(to_vec(400, 700), 20, GREEN)]
     )
 }

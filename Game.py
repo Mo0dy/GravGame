@@ -31,7 +31,7 @@ class Game(object):
         self.precision = 0.001
 
     def draw(self):
-        self.screen.fill(self.b)
+        self.screen.fill(self.background)
         # draws all entities (light rays are stored in the planets and also get drawn there)
         for e in self.wells + self.planets:
             e.draw(self.screen)  # it is also possible to pass a transformation matrix here
@@ -69,9 +69,11 @@ class Game(object):
     # These functions are used to aim
     def increase_precision(self):
         self.precision /= 10
+        print(self.precision)
 
     def decrease_precision(self):
         self.precision *= 10
+        print(self.precision)
 
     def move_little_left(self, dt):
         # maybe i should store cast and goal planets seperately

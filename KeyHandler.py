@@ -25,17 +25,17 @@ class Keyhandler(object):
         else:
             self.pressed_functions = {}
 
-    def handle_input(self, keys_pressed, keys_released, dt=0):
+    def handle_input(self, keys_pushed, keys_released, dt=0):
         # updates the pressed keys: (maybe this should be solved with a dictionary)
-        for k in keys_pressed:
+        for k in keys_pushed:
             self.pressed_keys.append(k)
         for k in keys_released:
-            self.pressed_keys.append(k)
+            self.pressed_keys.remove(k)
 
         # this called the mapped functions. The for loops could be integrated with the one above
-        for k in keys_pressed:
+        for k in keys_pushed:
             try:
-                self.pressed_functions[k]()
+                self.pushed_functions[k]()
             except:
                 pass
 
@@ -50,3 +50,4 @@ class Keyhandler(object):
                 self.pressed_functions[k](dt)
             except:
                 pass
+
