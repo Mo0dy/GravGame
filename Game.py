@@ -30,7 +30,8 @@ class Game(object):
         self.precision = 0.001
 
         # this array saves the selected entities
-        self.selected = []
+        self.push_selected = []
+        self.release_selected = []
 
     def draw(self):
         self.screen.fill(self.background)
@@ -79,7 +80,7 @@ class Game(object):
 
     def move_little_left(self, dt):
         # maybe i should store cast and goal planets seperately
-        for s in self.selected:
+        for s in self.release_selected:
             if isinstance(s, CastPlanet):
                 # this should only work on a selected entitiy
                 s.aim_left(self.precision * dt)
@@ -87,24 +88,35 @@ class Game(object):
                 s.set_size(s.size - self.precision)
 
     def move_little_right(self, dt):
-        for s in self.selected:
+        for s in self.release_selected:
             if isinstance(s, CastPlanet):
                 s.aim_right(self.precision * dt)
             elif isinstance(s, Well):
                 s.set_size(s.size + self.precision)
 
     def mouse_down(self):
-        self.selected = []
+        self.push_selected = []
         # find under mouse:
         for e in self.planets + self.wells:
             if is_on(pg.mouse.get_pos(), e):
-                if e in self.selected:
-                    self.selected.remove(e)
+                if e in self.push_selected:
+                    self.push_selected.remove(e)
                 else:
-                    self.selected.append(e)
+                    self.push_selected.append(e)
 
     def mouse_up(self):
-        pass
+        self.release_selected = []
+        # find under mouse:
+        for e in self.planets + self.wells:
+            if is_on(pg.mouse.get_pos(), e):
+                if e in self.release_selected:
+                    self.release_selected.remove(e)
+                else:
+                    self.release_selected.append(e)
 
     def mouse_pressed(self, dt):
-        pass
+        for e in self.push_selected:
+            if isinstance(e, Well):
+                e.set_size(dist(pg.mouse.get_pos(), e.pos) / 2)
+            elif isinstance(e, Planet):
+                e.point_at(pg.mouse.get_pos())
