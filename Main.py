@@ -1,12 +1,14 @@
 from GravGame.Game import *
 from GravGame.KeyHandler import *
+from GravGame.Level import *
 import time
 
-
+pg.init()
 game = Game()
+init_levels(game)
 
 key_handlers = {
-    "main": Keyhandler(
+    "main": Keyhandler(game,
         pressed_functions={
             pg.K_ESCAPE: game.my_exit,
             pg.K_SPACE: game.reset,
@@ -36,6 +38,8 @@ while loop:
     # event handling
     keys_pushed = []
     keys_released = []
+    mouse_down = False
+    mouse_up = False
     for e in pg.event.get():
         if e.type == pg.QUIT:
             loop = False  # the loop will end
@@ -44,10 +48,10 @@ while loop:
             keys_pushed.append(e.key)
         elif e.type == pg.KEYUP:
             keys_released.append(e.key)
-        # elif e.type == pg.MOUSEBUTTONDOWN:
-        #     on_click()
-        # elif e.type == pg.MOUSEBUTTONUP:
-        #     on_release()
-    key_handler.handle_input(keys_pushed, keys_released, dt)
+        elif e.type == pg.MOUSEBUTTONDOWN:
+            mouse_down = True
+        elif e.type == pg.MOUSEBUTTONUP:
+            mouse_up = True
+    key_handler.handle_input(keys_pushed, keys_released, mouse_down, mouse_up, dt)
     game.update(dt)
     game.draw()

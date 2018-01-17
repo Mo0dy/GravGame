@@ -19,7 +19,6 @@ class Game(object):
         self.size = [size_x, size_y]
         self.background = GREY
         # initializes the engine
-        pg.init()
         # creates a screen to draw on
         self.screen = pg.display.set_mode(self.size)
         pg.display.set_caption("GravGame")
@@ -29,6 +28,9 @@ class Game(object):
         self.loop = True
         # Used to aim with the selected planets:
         self.precision = 0.001
+
+        # this array saves the selected entities
+        self.selected = []
 
     def draw(self):
         self.screen.fill(self.background)
@@ -41,7 +43,7 @@ class Game(object):
     def update(self, dt):
         for p in self.planets:
             if isinstance(p, CastPlanet):
-                p.cast_ray(self.wells, self.planets, self.size[0], self.size[1])
+                p.cast_ray()
 
         # if it returns False the program should end
         return self.loop
@@ -77,12 +79,32 @@ class Game(object):
 
     def move_little_left(self, dt):
         # maybe i should store cast and goal planets seperately
-        for p in self.planets:
-            if isinstance(p, CastPlanet):
+        for s in self.selected:
+            if isinstance(s, CastPlanet):
                 # this should only work on a selected entitiy
-                p.aim += self.precision * dt
+                s.aim_left(self.precision * dt)
+            elif isinstance(s, Well):
+                s.set_size(s.size - self.precision)
 
     def move_little_right(self, dt):
-        for p in self.planets:
-            if isinstance(p, CastPlanet):
-                p.aim -= self.precision * dt
+        for s in self.selected:
+            if isinstance(s, CastPlanet):
+                s.aim_right(self.precision * dt)
+            elif isinstance(s, Well):
+                s.set_size(s.size + self.precision)
+
+    def mouse_down(self):
+        self.selected = []
+        # find under mouse:
+        for e in self.planets + self.wells:
+            if is_on(pg.mouse.get_pos(), e):
+                if e in self.selected:
+                    self.selected.remove(e)
+                else:
+                    self.selected.append(e)
+
+    def mouse_up(self):
+        pass
+
+    def mouse_pressed(self, dt):
+        pass

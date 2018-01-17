@@ -5,9 +5,10 @@ from copy import deepcopy
 
 
 class Planet(GameObj):
-    def __init__(self, pos, size, color):
+    def __init__(self, pos, size, color, game):
         super().__init__(pos, size, color)
         self.connected = False
+        self.game = game
 
     def draw(self, screen, mat=mat_identity()):
         if self.connected:
@@ -25,8 +26,8 @@ class Planet(GameObj):
 
 
 class CastPlanet(Planet):
-    def __init__(self, pos, size, color):
-        super().__init__(pos, size, color)
+    def __init__(self, pos, size, color, game):
+        super().__init__(pos, size, color, game)
         self.aim = 0  # angle at which the Planet aims
 
     def draw_child(self, screen, mat):
@@ -42,22 +43,21 @@ class CastPlanet(Planet):
         else:
             self.aim = -angle
 
-    def cast_ray(self, wells, planets, size_x, size_y, **kwargs):
-        if "debug" in kwargs:
-            debug = kwargs["debug"]
-        else:
-            debug = False
+    def cast_ray(self):
         self.connected = False
         try:
             self.ray.planet.connected = False
         except:
             pass
-        self.ray = Ray(deepcopy(self.pos),
-            translate(to_vec(LIGHTSPEED, 0), mat_rot(self.aim)),
-            self.color.correct_gamma(0.5),
-            wells, planets, self, 0, size_x, 0, size_y, debug=debug)
+        self.ray = Ray(self, self.game)
+
+    def aim_right(self, other):
+        self.aim += other
+
+    def aim_left(self, other):
+        self.aim -= other
 
 
 class GoalPlanet(Planet):
-    def __init__(self, pos, size, color):
-        super().__init__(pos, size, color)
+    def __init__(self, pos, size, color, game):
+        super().__init__(pos, size, color, game)

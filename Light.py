@@ -1,5 +1,5 @@
 from GravGame.Utility import *
-from copy import deepcopy
+import copy
 import pygame as pg
 import time
 
@@ -8,27 +8,22 @@ RAY_STEPSIZE = 0.005
 
 
 class Ray(GameObj):
-    def __init__(self, pos, vel, color, wells, planets, p, min_x, max_x, min_y, max_y, **kwargs):
-        super().__init__(pos, 2, color)
-        self.vel = vel / length(vel) *  LIGHTSPEED
+    def __init__(self, parent_planet, game):
+        super().__init__(copy.copy(parent_planet.pos), 2, parent_planet.color.correct_gamma(1.5))
         self.tail = []
-        if "debug" in kwargs:
-            self.debug = kwargs["debug"]
-        else:
-            self.debug = False
-        self.create(wells, planets, p, min_x, max_x, min_y, max_y)
+        self.game = game
+        self.create(parent_planet)
 
-    def create(self, wells, planets, p, min_x, max_x, min_y, max_y):
+    def create(self, parent_planet):
         pos = self.pos
-        vel = self.vel
-        forces = np.zeros(2)
+        vel = vec_from_angle(parent_planet.aim) * LIGHTSPEED
         # out of bounds and collision check
-        while pos[0] > min_x and pos[0] < max_x and pos[1] > min_y and pos[1] < max_y and not self.collision(wells, planets, p):
+        while pos[0] > 0 and pos[0] < self.game.size[0] and pos[1] > 0 and pos[1] < self.game.size[1] and not self.collision(parent_planet):
             # out of bounds and wells collision
-            self.tail.append(deepcopy(pos))
+            self.tail.append(copy.copy(pos))
             # Update Velocity then update position
             forces = np.zeros(2)
-            for w in wells:
+            for w in self.game.wells:
                 c_vec = w.pos - self.pos
                 distance = length(c_vec)
                 forces += w.m * 2 / distance ** 4 * c_vec  # / distance ** 3 would be more correct but / distance ** 4 is more fun
@@ -37,19 +32,19 @@ class Ray(GameObj):
             pos += vel * RAY_STEPSIZE
 
 
-    def collision(self, wells, planets, p):
-        for w in wells:
+    def collision(self, parent_planet):
+        for w in self.game.wells:
             c_vec = w.pos - self.pos
             if np.dot(c_vec, c_vec) < np.square(w.size):
                 return True
-        for plan in planets:
-            if not plan == p:
+        for plan in self.game.planets:
+            if not plan == parent_planet:
                 c_vec = plan.pos - self.pos
                 if np.dot(c_vec, c_vec) < np.square(plan.size):
-                    if plan.color == p.color:
+                    if plan.color == parent_planet.color:
                         self.planet = plan
                         plan.connected = True
-                        p.connected = True
+                        parent_planet.connected = True
                     return True
         return False
 

@@ -12,10 +12,12 @@ class Level(object):
 
 # a list of the different levels. These should probably be saved in files that are able to be edited in a level editor
 # mode
-levels = {
-    "test_level": Level(
-        [Well(400, 400, 80000000)],
-        [CastPlanet(to_vec(400, 100), 30, GREEN),
-         GoalPlanet(to_vec(400, 700), 20, GREEN)]
-    )
-}
+levels = {}
+
+
+def init_levels(game):
+    global levels
+    levels["test_level"] = Level(
+            [Well(400, 400, 80000000)],
+            [CastPlanet(to_vec(400, 100), 30, GREEN, game),
+             GoalPlanet(to_vec(400, 700), 20, GREEN, game)])

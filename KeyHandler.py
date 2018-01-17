@@ -6,9 +6,12 @@ from GravGame.Game import *
 
 # this class handles the keyinput every update it gets passed the pressed and released keys
 class Keyhandler(object):
-    def __init__(self, **kwargs):
+    def __init__(self, game, **kwargs):
+        self.game = game
         # this rememberes what keys are currently pressed
         self.pressed_keys = []
+        # remembers mouse state
+        self.mouse_pressed = False
         # these functions get called for the released keys
         if "released_functions" in kwargs:
             self.released_functions = kwargs["released_functions"]
@@ -25,7 +28,7 @@ class Keyhandler(object):
         else:
             self.pressed_functions = {}
 
-    def handle_input(self, keys_pushed, keys_released, dt=0):
+    def handle_input(self, keys_pushed, keys_released, mouse_down, mouse_up, dt=0):
         # updates the pressed keys: (maybe this should be solved with a dictionary)
         for k in keys_pushed:
             self.pressed_keys.append(k)
@@ -51,3 +54,12 @@ class Keyhandler(object):
             except:
                 pass
 
+        # mouse handling
+        if mouse_down:
+            self.mouse_pressed = True
+            self.game.mouse_down()
+        if mouse_up:
+            self.mouse_pressed = False
+            self.game.mouse_up()
+        if self.mouse_pressed:
+            self.game.mouse_pressed(dt)

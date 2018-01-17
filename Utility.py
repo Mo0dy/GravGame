@@ -60,6 +60,12 @@ def mat_scale(sx, sy):
                      [0, sy, 0],
                      [0, 0, 1]])
 
+
+# creates a vector from an angle
+def vec_from_angle(theta):
+    return np.dot(mat_rot(theta), np.array([1, 0, 1]))[:2]
+
+
 # distance between two points
 def dist(pos1, pos2):
     c_vec = pos2 - pos1
