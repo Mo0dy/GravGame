@@ -7,8 +7,6 @@ from GravGame.Well import *
 from GravGame.Level import *
 
 
-print("test")
-
 # This class contains everything important to the game
 class Game(object):
     def __init__(self, size_x=800, size_y=800):
